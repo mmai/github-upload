@@ -54,9 +54,10 @@ end
 
 def die(message, with_usage = false)
   puts "ERROR: #{message}"
-  puts %Q|Usage: #{__FILE__} file_to_upload [repo]
-  file_to_upload: File to be uplaoded.
-  repo: GitHub repo to upload to.  Ex: "tekkub/sandbox".  If omitted, the repo from `git remote show origin` will be used.| if with_usage
+  puts %Q|Usage: #{__FILE__} file_to_upload [repo [description]]
+  file_to_upload: File to be uploaded.
+  repo: GitHub repo to upload to.  Ex: "tekkub/sandbox".  If omitted, the repo from `git remote show origin` will be used.
+  description: Optional description of file being uploaded| if with_usage
   exit 1
 end
 
@@ -87,13 +88,14 @@ http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 res = http.get("/#{repo}/downloads?login=#{user}&token=#{token}")
 die "File has already been uploaded" if res.body =~ /<td><a href="https?:\/\/s3.amazonaws.com\/github\/downloads\/#{repo.gsub(/\//, "\/")}\/#{filename}.+">#{filename}<\/a><\/td>/
 
+des = ARGV[2]
 
 # Get the info we need from GitHub to post to S3
 res = http.post_form("/#{repo}/downloads", {
   :file_size => File.size(filename),
   :content_type => mime_type.simplified,
   :file_name => filename,
-  :description => '',
+  :description => des,
   :login => user,
   :token => token,
 })
