@@ -80,7 +80,7 @@ mime_type = MIME::Types.type_for(filename)[0] || MIME::Types["application/octet-
 
 
 # Check for conflict
-url = URI.parse "https://github.com/"
+url = URI.parse "http://github.com/"
 http = Net::HTTP.new url.host, url.port
 http.use_ssl = url.scheme == 'https'
 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
