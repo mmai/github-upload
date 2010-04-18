@@ -102,6 +102,7 @@ res = http.post_form("/#{repo}/downloads", {
 die "Repo not found" if res.class == Net::HTTPNotFound
 date = res["Date"]
 data = XmlSimple.xml_in(res.body)
+die data["errors"].first["error"] unless data["errors"].nil?
 die "Unable to authorize upload" if data["signature"].nil?
 
 
